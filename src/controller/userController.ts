@@ -34,7 +34,7 @@ const register = async (req: Request, res: Response) => {
 };
 
 const profile = async (req: Request, res: Response) => {
-	const user = await User.findById(req.params.id, { password: 0 });
+	const user = await User.findById(req.params.id);
 	if (!user) {
 		return res.status(404).send('No user found.');
 	}
