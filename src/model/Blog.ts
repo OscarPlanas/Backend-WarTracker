@@ -9,7 +9,7 @@ const Blog = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     },
-    date: Date,
+    date: String,
     comments: [{
         type: Schema.Types.ObjectId,
         ref: "Comment"
