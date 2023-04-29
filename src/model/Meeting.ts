@@ -6,11 +6,11 @@ const Meeting = new Schema({
     description: String,
     //lat: Number,
     //lng: Number,
-    owner: {
+    organizer: {
         type: Schema.Types.ObjectId,
         ref: "User"
     },
-    date: Date,
+    date: String,
     location: String,
     participants: [{
         type: Schema.Types.ObjectId,
@@ -20,6 +20,7 @@ const Meeting = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Comment"
     }],
+    registration_fee: Number,
     //vote_average: {type: Number, min: 0, max: 10, default: 0},
     //vote_count: {type: Number, min: 0, default: 0},
 });
