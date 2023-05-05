@@ -51,8 +51,11 @@ const getall = async (req: Request, res: Response) => {
 // };
 
 const getone = async (req: Request, res: Response) => {
-	const user = await User.findOne({ username: req.params.username });
-	res.json(user);
+	const user = await User.findById(req.params.id);
+	if (!user) {
+		return res.status(404).send('No user found.');
+	}
+	res.status(200).json(user);
 };
 
 const getbyemail = async (req: Request, res: Response) => {
