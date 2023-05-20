@@ -9,5 +9,6 @@ router.get('/:id_game', gameController.getone);
 router.put('/:id', gameController.update);
 router.delete('/:id', gameController.deleteGame);
 router.post('/', gameController.addGame);
+router.get('/tournament/:id_tournament', gameController.getByTournament);
 
 export default router;

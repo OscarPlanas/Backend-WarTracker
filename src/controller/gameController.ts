@@ -3,8 +3,7 @@ import User from '../model/User';
 
 import { Request, Response } from 'express';
 const getall = async (req: Request, res: Response) => {
-    const games = await Game.find();
-    //.populate('tournament').populate('player')
+    const games = await Game.find().populate('tournament').populate('player');
     res.json(games);
 }
 const getone = async (req: Request, res: Response) => {
@@ -51,10 +50,19 @@ const deleteGame = async (req: Request, res: Response) => {
     }
 }
 
+const getByTournament = async (req: Request, res: Response) => {
+    const game = await Game.find({tournament: req.params.id_tournament}).populate('tournament').populate('player');
+    if (!game) {
+        return res.status(404).send('The game does not exist');
+    }
+    res.json(game);
+}
+
 export default {
     getall,
     getone,
     update,
     deleteGame,
     addGame,
+    getByTournament,
 }
