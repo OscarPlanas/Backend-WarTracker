@@ -4,11 +4,20 @@ import { verifyToken, isOwner } from '../middlewares/authJWT'
 
 const router = Router();
 
-router.get('/', blogController.getall);
+
 router.get('/:id_blog', blogController.getone);
-router.put('/:id',[verifyToken], blogController.update);
+router.put('/edit/:id', blogController.update);
 router.delete('/:id',[verifyToken], blogController.deleteBlog);
+router.get('/comments/:id_blog', blogController.getComments);
+router.get('/getonecomment/:id_comment', blogController.getOneComment);
+router.post('/addcomment/:id_blog',blogController.addComment);
+router.post('/addreply/:id_comment',blogController.addReply);
 router.post('/', blogController.addBlog);
+router.post('/like/:id_comment/:idUser', blogController.addLikeToComment);
+router.delete('/cancellike/:id_comment/:idUser', blogController.deleteLikeToComment);
+router.post('/dislike/:id_comment/:idUser', blogController.addDislikeToComment);
+router.delete('/canceldislike/:id_comment/:idUser', blogController.deleteDislikeToComment);
+router.get('/', blogController.getall);
 // router.get('/',[verifyToken], eventController.getall);
 
 // router.get('/:id_event',[verifyToken], eventController.getone);

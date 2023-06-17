@@ -52,7 +52,7 @@ const addGame = async (req: Request, res: Response) => {
     console.log(jsonParticipants2);
     console.log(jsonParticipants2[0].username);
     //console.log(jsonParticipants2.username);
-    console.log(jsonParticipants2[1].username);
+    //console.log(jsonParticipants2[1].username);
     console.log("separado");
     console.log("^");
     console.log(participants.length);
@@ -128,23 +128,23 @@ const addGame = async (req: Request, res: Response) => {
         if (req.body[i].alliance == null) {
             req.body[i].alliance = "---";
         }
-        if (req.body[i].victory_points_against === "") {
+        if (req.body[i].victory_points_against === "" || Number.isInteger(parseInt(req.body[i].victory_points_against)) === false) {
             console.log("entro a victory_points_against");
             req.body[i].victory_points_against = 0;
         }
-        if (req.body[i].victory_points_favour === "") {
+        if (req.body[i].victory_points_favour === "" || Number.isInteger(parseInt(req.body[i].victory_points_favour)) === false ) {
             console.log("entro a victory_points_favour");
             req.body[i].victory_points_favour = 0;
         }
-        if (req.body[i].leaders_eliminated === "") {
+        if (req.body[i].leaders_eliminated === "" || Number.isInteger(parseInt(req.body[i].leaders_eliminated)) === false) {
             console.log("entro a leaders_eliminated");
             req.body[i].leaders_eliminated = 0;
         }
-        if (req.body[i].games_played === "") {
+        if (req.body[i].games_played === "" || Number.isInteger(parseInt(req.body[i].games_played)) === false) {
             console.log("entro a games_played");
             req.body[i].games_played = 0;
         }
-        if (req.body[i].difference_points === "") {
+        if (req.body[i].difference_points === "" || Number.isInteger(parseInt(req.body[i].difference_points)) === false) {
             console.log("entro a difference_points");
             req.body[i].difference_points = 0;
         }
