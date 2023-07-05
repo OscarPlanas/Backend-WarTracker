@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose';
 
 const Meeting = new Schema({
 	title: String,
-    image: String,
+    imageUrl: String,
     description: String,
     //lat: Number,
     //lng: Number,

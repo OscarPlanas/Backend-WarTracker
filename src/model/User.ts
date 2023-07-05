@@ -9,6 +9,9 @@ const User = new Schema({
 	isAdmin: Boolean,
 	matches: Number,
 	points: Number,
+	imageUrl: String,
+	backgroundImageUrl: String,
+	about: String,
 });
 
 export default model('User', User);

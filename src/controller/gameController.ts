@@ -50,7 +50,7 @@ const addGame = async (req: Request, res: Response) => {
     console.log(jsonParticipants);
     const jsonParticipants2 = JSON.parse(jsonParticipants);
     console.log(jsonParticipants2);
-    console.log(jsonParticipants2[0].username);
+    //console.log(jsonParticipants2[0].username);
     //console.log(jsonParticipants2.username);
     //console.log(jsonParticipants2[1].username);
     console.log("separado");

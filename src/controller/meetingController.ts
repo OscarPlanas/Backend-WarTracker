@@ -19,15 +19,33 @@ const getone = async (req: Request, res: Response) => {
 const update = async (req: Request, res: Response) => {
     try {
         const title = req.body.title;
+        const location = req.body.location;
+        const date = req.body.date;
+        const registration_fee = req.body.registration_fee;
         const description = req.body.description;
+        const imageUrl = req.body.imageUrl;
         const meeting = await Meeting.findByIdAndUpdate(req.params.id, {
-            title, description
+            title, description, location, date, registration_fee, imageUrl
         }, { new: true });
         res.json(meeting).status(200);
     } catch (error) {
         res.status(401).send(error);
     }
 }
+/*    try {
+        const title = req.body.title;
+        const description = req.body.description;
+        const body_text = req.body.body_text;
+        const blog = await Blog.findByIdAndUpdate(req.params.id, {
+            title, description, body_text
+        }, { new: true });
+        res.json(blog).status(200);
+    } catch (error) {
+        res.status(401).send(error);
+    }
+}
+
+*/
 
 const deleteMeeting = async (req: Request, res: Response) => {
     try {

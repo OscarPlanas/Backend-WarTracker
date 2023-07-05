@@ -10,6 +10,7 @@ const Blog = new Schema({
         ref: "User"
     },
     date: String,
+    imageUrl: String,
     comments: [{
         type: Schema.Types.ObjectId,
         ref: "Comment"

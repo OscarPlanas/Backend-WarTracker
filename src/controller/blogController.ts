@@ -9,10 +9,7 @@ const getall = async (req: Request, res: Response) => {
     res.json(blogs);
 }
 const getone = async (req: Request, res: Response) => {
-    const blog = await Blog.findById(req.params.id_blog).populate('author').populate({
-        path: 'comments',
-        populate: { path: 'author' }
-    });
+    const blog = await Blog.findById(req.params.id_blog).populate('author');
     if (!blog) {
         return res.status(404).send('The blog does not exist');
     }
@@ -34,8 +31,9 @@ const update = async (req: Request, res: Response) => {
         const title = req.body.title;
         const description = req.body.description;
         const body_text = req.body.body_text;
+        const imageUrl = req.body.imageUrl;
         const blog = await Blog.findByIdAndUpdate(req.params.id, {
-            title, description, body_text
+            title, description, body_text, imageUrl
         }, { new: true });
         res.json(blog).status(200);
     } catch (error) {

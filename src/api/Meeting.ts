@@ -6,7 +6,7 @@ const router = Router();
 
 
 router.get('/:id', meetingController.getone);
-router.put('/:id',[verifyToken], meetingController.update);
+router.put('/edit/:id', meetingController.update);
 router.delete('/:id',[verifyToken], meetingController.deleteMeeting);
 router.post('/', meetingController.addMeeting);
 //router.post('/join/:id', meetingController.addParticipant);
