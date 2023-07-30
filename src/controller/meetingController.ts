@@ -32,20 +32,7 @@ const update = async (req: Request, res: Response) => {
         res.status(401).send(error);
     }
 }
-/*    try {
-        const title = req.body.title;
-        const description = req.body.description;
-        const body_text = req.body.body_text;
-        const blog = await Blog.findByIdAndUpdate(req.params.id, {
-            title, description, body_text
-        }, { new: true });
-        res.json(blog).status(200);
-    } catch (error) {
-        res.status(401).send(error);
-    }
-}
 
-*/
 
 const deleteMeeting = async (req: Request, res: Response) => {
     try {
@@ -89,6 +76,15 @@ const addParticipant = async (req: Request, res: Response) => {
     if (meeting.participants.includes(user?._id!)) {
         return res.status(404).send('The user is already in the meeting');
     }
+
+    user.updateOne({ $push: { meetingsFollowed: meeting._id } }, (err: any) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        console.log("user saved");
+        user.save();
+    });
+
     meeting.updateOne({ $push: { participants: user._id } }, (err: any) => {
         if (err) {
             return res.status(500).send(err);
@@ -110,6 +106,13 @@ const deleteParticipant = async (req: Request, res: Response) => {
     if (!meeting.participants.includes(user?._id!)) {
         return res.status(404).send('The user is not in the meeting');
     }
+    user.updateOne({ $pull: { meetingsFollowed: meeting._id } }, (err: any) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        console.log("user saved");
+        user.save();
+    });
     meeting.updateOne({ $pull: { participants: user._id } }, (err: any) => {
         if (err) {
             return res.status(500).send(err);

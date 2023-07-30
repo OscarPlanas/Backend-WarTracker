@@ -1,5 +1,6 @@
 import Blog from '../model/Blog';
 import Comment from '../model/Comment';
+import User from '../model/User';
 
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
@@ -9,11 +10,12 @@ const getall = async (req: Request, res: Response) => {
     res.json(blogs);
 }
 const getone = async (req: Request, res: Response) => {
-    const blog = await Blog.findById(req.params.id_blog).populate('author');
+    const blog = await Blog.findById(req.params.id_blog).populate('author').populate('usersLiked');
     if (!blog) {
         return res.status(404).send('The blog does not exist');
     }
     res.json(blog);
+
 }
 const setone = async (req: Request, res: Response) => {
     const blog = new Blog(req.body);
@@ -62,8 +64,6 @@ const addBlog = async (req: Request, res: Response) => {
 };
 
 const getComments = async (req: Request, res: Response) => {
-    /*const blogs = await Blog.find().populate('author');
-    res.json(blogs);*/
     const blog = await Blog.findById(req.params.id_blog);
     if (!blog) {
         return res.status(404).send('The blog does not exist');
@@ -72,10 +72,6 @@ const getComments = async (req: Request, res: Response) => {
         path: 'replies',
         populate: { path: 'owner' }
     });
-    /*const blog = await Blog.findById(req.params.id_blog).populate('author').populate({
-      path: 'comments',
-      populate: { path: 'author' }
-  });*/
     res.json(comments);
 };
 
@@ -219,40 +215,68 @@ const deleteDislikeToComment = async (req: Request, res: Response) => {
     }
 };
 
-// const updateComment = async (req: Request, res: Response) => {
-//     const event = await Event.findById(req.params.id_event);
-//     if (!event) {
-//         return res.status(404).send('The event does not exist');
-//     }
-//     await Comment.findByIdAndUpdate(req.params.id_comment, req.body, (err: any) => {
-//         if (err) {
-//             return res.status(500).send(err);
-//         }
-//         res.status(200).json({ status: 'Comment updated' });
-//     });
-// }
+const addUserLiked = async (req: Request, res: Response) => {
+    console.log("entramos en addUserLiked");
+    const user = await User.findById(req.params.idUser);
+    if (!user) {
+        return res.status(404).send('The user does not exist');
+    }
+    const blog = await Blog.findById(req.params.idBlog);
+    if (!blog) {
+        return res.status(404).send('The blog does not exist');
+    }
+    if (blog.usersLiked.includes(user?._id!)) {
+        return res.status(404).send('The user is already in the blog');
+    }
+    user.updateOne({ $push: { blogsLiked: blog._id } }, (err: any) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        console.log("user saved");
+        user.save();
+    });
 
-// const deleteComment = async (req: Request, res: Response) => {
-//     const event = await Event.findById(req.params.id_event);
-//     if (!event) {
-//         return res.status(404).send('The event does not exist');
-//     }
-//     const comment = await Comment.findById(req.params.id_comment);
-//     if (!comment) {
-//         return res.status(404).send('The comment does not exist');
-//     }
-//     await Comment.findByIdAndDelete(req.params.id_comment, (err: any) => {
-//         if (err) {
-//             return res.status(500).send(err);
-//         }
-//         event.update(
-//             { _id: event._id },
-//             { $pull: { comments: comment._id } },
-//         );
-//         event.save();
-//         res.status(200).json({ status: 'Comment deleted' });
-//     });
-// }
+    blog.updateOne({ $push: { usersLiked: user._id } }, (err: any) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        blog.save();
+        res.status(200).json({ status: 'User saved' });
+    });
+}
+
+const deleteUserLiked = async (req: Request, res: Response) => {
+    console.log("entramos en deleteUserLiked");
+    const user = await User.findById(req.params.idUser);
+    if (!user) {
+        return res.status(404).send('The user does not exist');
+    }
+    const blog = await Blog.findById(req.params.idBlog);
+    if (!blog) {
+        return res.status(404).send('The blog does not exist');
+    }
+    if (!blog.usersLiked.includes(user?._id!)) {
+        return res.status(404).send('The user is not in the blog');
+    }
+    user.updateOne({ $pull: { blogsLiked: blog._id } }, (err: any) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        console.log("user deleted");
+        user.save();
+    });
+    blog.updateOne({ $pull: { usersLiked: user._id } }, (err: any) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        blog.save();
+        res.status(200).json({ status: 'User deleted' });
+    });
+}
+
+
+
+        
 
 
 export default {
@@ -269,6 +293,8 @@ export default {
     getOneComment,
     deleteLikeToComment,
     addDislikeToComment,
-    deleteDislikeToComment
+    deleteDislikeToComment,
+    addUserLiked,
+    deleteUserLiked
 
 }
