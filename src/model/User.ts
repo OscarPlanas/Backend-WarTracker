@@ -5,7 +5,6 @@ const User = new Schema({
 	username: String,
 	password: String,
 	date: String,
-	birthdate: Date,
 	email: String,
 	isAdmin: Boolean,
 	matches: Number,
@@ -29,6 +28,7 @@ const User = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: "User"
 	}],
+	online: { type: Boolean, default: false },
 });
 
 export default model('User', User);

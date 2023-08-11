@@ -4,9 +4,10 @@ import { body } from 'express-validator';
 import { verifyToken, isModerator } from '../middlewares/authJWT'
 
 const router = Router();
+//[verifyToken, isModerator],
+router.post('/report', reportController.addReport);
+router.get('/', reportController.getReports);
+router.get('/:id_report', reportController.getReport);
 
-router.get('/',[verifyToken, isModerator], reportController.getReports);
-router.get('/:id_report',[verifyToken, isModerator], reportController.getReport);
-router.post('/:id',[verifyToken], reportController.addReport);
-router.delete('/:id',[verifyToken, isModerator], reportController.deleteReport);
+router.delete('/:id', reportController.deleteReport);
 export default router;

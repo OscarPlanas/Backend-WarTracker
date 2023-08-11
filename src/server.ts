@@ -13,6 +13,10 @@ import Report from "./api/Report";
 import User from "./api/User";
 import auth from "./api/auth";
 import Blog from "./api/blog";
+import Comment from "./api/Comment";
+import Event from "./api/Event";
+
+import userController from "./controller/userController";
 
 const app = express();
 const port = process.env.PORT || 5432;
@@ -34,6 +38,9 @@ app.use('/api/games', Game)
 app.use('/api/report', Report)
 app.use('/api/chats', Chat)
 app.use('/api/messages', Message)
+app.use('/api/comments', Comment)
+app.use('/api/events', Event)
+
 
 app.get('/', (req: express.Request, res: express.Response) => {
 	res.send('Hello World!')
@@ -54,11 +61,17 @@ const clients: { [key: string]: Socket } = {};
 io.on("connection", (socket: Socket) => {
 	console.log("connected");
 	console.log(socket.id, "has joined");
-	
+
 
 	socket.on("signin", (id: string) => {
 		console.log(id);
 		clients[id] = socket;
+		try {
+			userController.updateUserOnlineStatus(id, true);
+			console.log(`User ${id} is now online`);
+		} catch (error) {
+			console.error(`Error updating online status for user ${id}: ${error}`);
+		}
 		console.log(clients);
 	});
 
@@ -67,12 +80,30 @@ io.on("connection", (socket: Socket) => {
 		const targetId = msg.targetId;
 		if (clients[targetId]) clients[targetId].emit("message", msg);
 	});
+	// When a user comes online, emit an event to notify other users
+	socket.on('userOnline', (userId) => {
+		socket.broadcast.emit('userOnline', userId);
+	});
+
+	// When a user goes offline, emit an event to notify other users
+	socket.on('userOffline', (userId) => {
+		socket.broadcast.emit('userOffline', userId);
+	});
+
 
 	socket.on("disconnect", () => {
 		console.log(socket.id, "has left");
 		for (const key in clients) {
 			if (clients[key].id === socket.id) {
 				delete clients[key];
+				// Update user's online status in the database
+				try {
+					userController.updateUserOnlineStatus(key, false);
+					console.log(`User ${key} is now offline`);
+				} catch (error) {
+					console.error(`Error updating online status for user ${key}: ${error}`);
+				}
+
 				break;
 			}
 		}

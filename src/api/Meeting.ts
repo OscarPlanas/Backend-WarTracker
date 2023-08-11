@@ -7,7 +7,7 @@ const router = Router();
 
 router.get('/:id', meetingController.getone);
 router.put('/edit/:id', meetingController.update);
-router.delete('/:id',[verifyToken], meetingController.deleteMeeting);
+router.delete('/:id', meetingController.deleteMeeting);
 router.post('/', meetingController.addMeeting);
 //router.post('/join/:id', meetingController.addParticipant);
 router.put('/join/:idUser/:idMeeting',meetingController.addParticipant);
@@ -20,6 +20,7 @@ router.post('/like/:id_comment/:idUser', meetingController.addLikeToComment);
 router.delete('/cancellike/:id_comment/:idUser', meetingController.deleteLikeToComment);
 router.post('/dislike/:id_comment/:idUser', meetingController.addDislikeToComment);
 router.delete('/canceldislike/:id_comment/:idUser', meetingController.deleteDislikeToComment);
+//router.get('/allcomments', meetingController.getAllComments);
 
 router.get('/', meetingController.getall);
 

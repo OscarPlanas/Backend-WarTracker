@@ -19,6 +19,24 @@ const register = async (req: Request, res: Response) => {
 	let password2 = req.body.password;
 	const password = await bcrypt.hash(password2, 10);
 
+	const findIfUsernameExists = await User.findOne({
+		username: username,
+		_id: { $ne: req.params.id } // Exclude the current user's document
+	});
+
+	if (findIfUsernameExists) {
+		return res.status(402).send('Username already exists.');
+	}
+
+	const findIfEmailExists = await User.findOne({
+		email: email,
+		_id: { $ne: req.params.id } // Exclude the current user's document
+	});
+
+	if (findIfEmailExists) {
+		return res.status(403).send('Email already exists.');
+	}
+
 	const newUser = new User({ name, username, email, password, birthdate, isAdmin: false, imageUrl, backgroundImageUrl, about, date });
 	await newUser.save((err: any) => {
 		if (err) {
@@ -253,65 +271,20 @@ const unfollowUser = async (req: Request, res: Response) => {
 }
 
 
+const updateUserOnlineStatus = async (userId: string, onlineStatus: boolean) => {
+	try {
+	  const updatedUser = await User.findByIdAndUpdate(
+		userId,
+		{ online: onlineStatus },
+		{ new: true }
+	  );
+	  return updatedUser;
+	} catch (error) {
+	  console.error(`Error updating user online status: ${error}`);
+	  throw error;
+	}
+  };
 
-/*
-const addParticipant = async (req: Request, res: Response) => {
-  const user = await User.findById(req.params.idUser);
-  if (!user) {
-	  return res.status(404).send('The user does not exist');
-  }
-  const meeting = await Meeting.findById(req.params.idMeeting);
-  if (!meeting) {
-	  return res.status(404).send('The meeting does not exist');
-  }
-  if (meeting.participants.includes(user?._id!)) {
-	  return res.status(404).send('The user is already in the meeting');
-  }
-
-  user.updateOne({ $push: { meetingsFollowed: meeting._id } }, (err: any) => {
-	  if (err) {
-		  return res.status(500).send(err);
-	  }
-	  console.log("user saved");
-	  user.save();
-  });
-
-  meeting.updateOne({ $push: { participants: user._id } }, (err: any) => {
-	  if (err) {
-		  return res.status(500).send(err);
-	  }
-	  meeting.save();
-	  res.status(200).json({ status: 'User saved' });
-  });
-}
-
-const deleteParticipant = async (req: Request, res: Response) => {
-  const user = await User.findById(req.params.idUser);
-  if (!user) {
-	  return res.status(404).send('The user does not exist');
-  }
-  const meeting = await Meeting.findById(req.params.idMeeting);
-  if (!meeting) {
-	  return res.status(404).send('The meeting does not exist');
-  }
-  if (!meeting.participants.includes(user?._id!)) {
-	  return res.status(404).send('The user is not in the meeting');
-  }
-  user.updateOne({ $pull: { meetingsFollowed: meeting._id } }, (err: any) => {
-	  if (err) {
-		  return res.status(500).send(err);
-	  }
-	  console.log("user saved");
-	  user.save();
-  });
-  meeting.updateOne({ $pull: { participants: user._id } }, (err: any) => {
-	  if (err) {
-		  return res.status(500).send(err);
-	  }
-	  meeting.save();
-	  res.status(200).json({ status: 'User deleted' });
-  });
-}*/
 
 
 
@@ -324,5 +297,6 @@ export default {
 	update,
 	getbyemail,
 	followUser,
-	unfollowUser
+	unfollowUser,
+	updateUserOnlineStatus
 };

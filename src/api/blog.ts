@@ -7,7 +7,7 @@ const router = Router();
 
 router.get('/:id_blog', blogController.getone);
 router.put('/edit/:id', blogController.update);
-router.delete('/:id',[verifyToken], blogController.deleteBlog);
+router.delete('/:id', blogController.deleteBlog);
 router.get('/comments/:id_blog', blogController.getComments);
 router.get('/getonecomment/:id_comment', blogController.getOneComment);
 router.post('/addcomment/:id_blog',blogController.addComment);

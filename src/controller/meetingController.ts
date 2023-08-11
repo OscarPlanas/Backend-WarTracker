@@ -18,14 +18,18 @@ const getone = async (req: Request, res: Response) => {
 
 const update = async (req: Request, res: Response) => {
     try {
+        console.log(req.body.lat);
+        console.log(req.body.lng);
         const title = req.body.title;
         const location = req.body.location;
         const date = req.body.date;
         const registration_fee = req.body.registration_fee;
         const description = req.body.description;
         const imageUrl = req.body.imageUrl;
+        const lat = req.body.lat;
+        const lng = req.body.lng;
         const meeting = await Meeting.findByIdAndUpdate(req.params.id, {
-            title, description, location, date, registration_fee, imageUrl
+            title, description, location, date, registration_fee, imageUrl, lat, lng
         }, { new: true });
         res.json(meeting).status(200);
     } catch (error) {
@@ -275,6 +279,13 @@ const deleteDislikeToComment = async (req: Request, res: Response) => {
     }
 };
 
+const getAllComments = async (req: Request, res: Response) => {
+    const comments = await Comment.find().populate('owner').populate({
+        path: 'replies',
+        populate: { path: 'owner' }
+    });
+};
+
 export default {
     getall,
     getone,
@@ -291,5 +302,6 @@ export default {
     addLikeToComment,
     deleteLikeToComment,
     addDislikeToComment,
-    deleteDislikeToComment
+    deleteDislikeToComment,
+    getAllComments
 }

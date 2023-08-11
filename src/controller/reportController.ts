@@ -3,15 +3,23 @@ import Report from '../model/Report';
 import { Request, Response } from 'express';
 
 const addReport = async (req: Request, res: Response) => {
-    const owner = req.params.id;
+    const owner = req.body.owner;
     const reason = req.body.reason;
-    const user_reported = req.body.user_reported;
+    const reported = req.body.reported;
+    const type = req.body.type;
     const date = req.body.date;
+    console.log(owner);
+    console.log(reason);
+    console.log(reported);
+    console.log(type);
+    console.log(date);
+
     const newReport = new Report({
 		owner,
-        user_reported,
+        reported,
         reason,
-        date
+        date,
+        type
         
 	});
     await newReport.save( (err: any) => {
