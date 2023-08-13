@@ -2,12 +2,9 @@ import { Request, Response } from 'express';
 import Chat from '../model/Chat';
 import User from '../model/User';
 
+// Function to create a new chat between users
 const create = async (req: Request, res: Response) => {
-    
-
     const { idUserOpening, idUserReceiver } = req.body;
-    console.log("idUserOpening " + idUserOpening);
-    console.log("idUserReceiver" + idUserReceiver);
     try {
         const clientOpening = await User.findById(idUserOpening);
         const clientRecieving = await User.findById(idUserReceiver);
@@ -25,16 +22,20 @@ const create = async (req: Request, res: Response) => {
     }
 };
 
+// Function to get all chats with populated client information
 const getall = async (req: Request, res: Response) => {
     const chats = await Chat.find().populate('client1').populate('client2');
     res.json(chats);
 };
+
+// Function to get all chats associated with a specific user
 const getAllChatsOfUser = async (req: Request, res: Response) => {
     const idUser = req.params.id_user;
     const chats = await Chat.find({ $or: [{ client1: idUser }, { client2: idUser }] }).populate('client1').populate('client2');
     res.json(chats);
 };
 
+// Function to get a chat between two specific users
 const getChatByUsers = async (req: Request, res: Response) => {
     const idUserOpening = req.params.id_user_opening;
     const idUserReceiver = req.params.id_user_receiver;
@@ -43,7 +44,7 @@ const getChatByUsers = async (req: Request, res: Response) => {
     res.json(chat);
 };
     
-
+// Function to get a single chat by its ID
 const getone = async (req: Request, res: Response) => {
     const chat = await Chat.findById(req.params.id).populate('client1').populate('client2');
     if (!chat) {

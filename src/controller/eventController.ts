@@ -17,6 +17,7 @@ const createEvent = async (req: Request, res: Response) => {7
     }
 };
 
+// Function to get events associated with a specific user
 const getEventByUser = async (req: Request, res: Response) => {
     try {
         const { id_user } = req.params;
@@ -27,11 +28,13 @@ const getEventByUser = async (req: Request, res: Response) => {
     }
 };
 
+// Function to get all events with populated author data
 const getAllEvents = async (req: Request, res: Response) => {
     const events = await Event.find().populate('author');
     res.json(events);
 };
 
+// Function to delete an event by its ID
 const deleteEvent = async (req: Request, res: Response) => {
     const event = await Event.findById(req.params.id_event);
     if (!event) {
@@ -41,6 +44,7 @@ const deleteEvent = async (req: Request, res: Response) => {
     res.json({ status: 'Event deleted' });
 };
 
+// Function to delete an event by meeting ID
 const deleteEventByMeetingID = async (req: Request, res: Response) => {
     const event = await Event.findOne({ meeting: req.params.id_meeting });
     if (!event) {

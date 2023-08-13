@@ -2,17 +2,13 @@ import Report from '../model/Report';
 
 import { Request, Response } from 'express';
 
+// Function to add a new report
 const addReport = async (req: Request, res: Response) => {
     const owner = req.body.owner;
     const reason = req.body.reason;
     const reported = req.body.reported;
     const type = req.body.type;
     const date = req.body.date;
-    console.log(owner);
-    console.log(reason);
-    console.log(reported);
-    console.log(type);
-    console.log(date);
 
     const newReport = new Report({
 		owner,
@@ -30,11 +26,13 @@ const addReport = async (req: Request, res: Response) => {
     });
 }
 
+// Function to get all reports
 const getReports = async (req: Request, res: Response) => {
     const reports = await Report.find();
     res.json(reports);
 }
 
+// Function to get a specific report by its ID
 const getReport = async (req: Request, res: Response) => {
     const report = await Report.findById(req.params.id_report);
     if (!report) {
@@ -43,6 +41,7 @@ const getReport = async (req: Request, res: Response) => {
     res.json(report);
 }
 
+// Function to delete a report by its ID
 const deleteReport = async (req: Request, res: Response) => {
     try {
 		await Report.findByIdAndRemove(req.params.id);

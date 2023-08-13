@@ -4,10 +4,13 @@ import Comment from '../model/Comment';
 import Meeting from '../model/Meeting';
 import User from '../model/User';
 
+// Function to get all meetings
 const getall = async (req: Request, res: Response) => {
     const meetings = await Meeting.find().populate('organizer').populate('participants');
     res.json(meetings);
 }
+
+// Function to get a specific meeting by ID
 const getone = async (req: Request, res: Response) => {
     const meeting = await Meeting.findById(req.params.id).populate('organizer').populate('participants');
     if (!meeting) {
@@ -16,10 +19,10 @@ const getone = async (req: Request, res: Response) => {
     res.json(meeting);
 }
 
+// Function to update a meeting
 const update = async (req: Request, res: Response) => {
     try {
-        console.log(req.body.lat);
-        console.log(req.body.lng);
+
         const title = req.body.title;
         const location = req.body.location;
         const date = req.body.date;
@@ -37,7 +40,7 @@ const update = async (req: Request, res: Response) => {
     }
 }
 
-
+// Function to delete a meeting
 const deleteMeeting = async (req: Request, res: Response) => {
     try {
         await Meeting.findByIdAndRemove(req.params.id);
@@ -48,6 +51,7 @@ const deleteMeeting = async (req: Request, res: Response) => {
     }
 }
 
+// Function to add a new meeting
 const addMeeting = async (req: Request, res: Response) => {
     const meeting = new Meeting(req.body);
     await meeting.save((err: any) => {
@@ -57,6 +61,8 @@ const addMeeting = async (req: Request, res: Response) => {
         res.status(200).json({ status: 'Meeting saved' });
     });
 };
+
+// Function to set one meeting
 const setone = async (req: Request, res: Response) => {
     const meeting = new Meeting(req.body);
     await meeting.save((err: any) => {
@@ -68,6 +74,7 @@ const setone = async (req: Request, res: Response) => {
     console.log(req.body);
 }
 
+// Function to add a participant to a meeting
 const addParticipant = async (req: Request, res: Response) => {
     const user = await User.findById(req.params.idUser);
     if (!user) {
@@ -98,6 +105,7 @@ const addParticipant = async (req: Request, res: Response) => {
     });
 }
 
+// Function to delete a participant from a meeting
 const deleteParticipant = async (req: Request, res: Response) => {
     const user = await User.findById(req.params.idUser);
     if (!user) {
@@ -126,6 +134,7 @@ const deleteParticipant = async (req: Request, res: Response) => {
     });
 }
 
+// Function to get comments associated with a meeting
 const getComments = async (req: Request, res: Response) => {
 
     const meeting = await Meeting.findById(req.params.id_meeting);
@@ -140,6 +149,7 @@ const getComments = async (req: Request, res: Response) => {
     res.json(comments);
 };
 
+// Function to get a specific comment by ID, including owner and replies
 const getOneComment = async (req: Request, res: Response) => {
     const comment = await Comment.findById(req.params.id_comment).populate('owner').populate({
         path: 'replies',
@@ -151,7 +161,7 @@ const getOneComment = async (req: Request, res: Response) => {
     res.json(comment);
 };
 
-
+// Function to add a comment to a meeting and update the meeting's comments list
 const addComment = async (req: Request, res: Response) => {
     const meeting = await Meeting.findById(req.params.id_meeting);
     if (!meeting) {
@@ -168,6 +178,8 @@ const addComment = async (req: Request, res: Response) => {
         res.status(200).json({ status: 'Comment saved' });
     });
 };
+
+// Function to add a reply to a comment and update the comment's replies list
 const addReply = async (req: Request, res: Response) => {
     const comment = await Comment.findById(req.params.id_comment);
     if (!comment) {
@@ -185,6 +197,7 @@ const addReply = async (req: Request, res: Response) => {
     });
 };
 
+// Function to add a like to a comment
 const addLikeToComment = async (req: Request, res: Response) => {
     try {
         console.log(req.params.id_comment);
@@ -215,6 +228,7 @@ const addLikeToComment = async (req: Request, res: Response) => {
     }
 };
 
+// Function to delete a like from a comment
 const deleteLikeToComment = async (req: Request, res: Response) => {
     try {
         const comment = await Comment.findById(req.params.id_comment);
@@ -234,6 +248,8 @@ const deleteLikeToComment = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Comment not found', error });
     }
 };
+
+// Function to add a dislike to a comment
 const addDislikeToComment = async (req: Request, res: Response) => {
     try {
         const comment = await Comment.findById(req.params.id_comment);
@@ -258,6 +274,7 @@ const addDislikeToComment = async (req: Request, res: Response) => {
     }
 };
 
+// Function to delete a dislike from a comment
 const deleteDislikeToComment = async (req: Request, res: Response) => {
     console.log("entramos en deleteDislikeToComment");
     try {
@@ -279,6 +296,7 @@ const deleteDislikeToComment = async (req: Request, res: Response) => {
     }
 };
 
+// Function to get all comments, including owner and replies
 const getAllComments = async (req: Request, res: Response) => {
     const comments = await Comment.find().populate('owner').populate({
         path: 'replies',

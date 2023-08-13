@@ -1,9 +1,7 @@
-import blogController from '../controller/blogController';
 import { Router } from 'express';
-import { verifyToken, isOwner } from '../middlewares/authJWT'
+import blogController from '../controller/blogController';
 
 const router = Router();
-
 
 router.get('/:id_blog', blogController.getone);
 router.put('/edit/:id', blogController.update);
@@ -18,7 +16,6 @@ router.delete('/cancellike/:id_comment/:idUser', blogController.deleteLikeToComm
 router.post('/dislike/:id_comment/:idUser', blogController.addDislikeToComment);
 router.delete('/canceldislike/:id_comment/:idUser', blogController.deleteDislikeToComment);
 router.get('/', blogController.getall);
-
 router.put('/likeblog/:idUser/:idBlog',blogController.addUserLiked);
 router.put('/dislikeblog/:idUser/:idBlog',blogController.deleteUserLiked);
 

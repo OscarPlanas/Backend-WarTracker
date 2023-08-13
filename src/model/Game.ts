@@ -15,8 +15,7 @@ const Game = new Schema({
     difference_points: Number,
     games_played: Number,
     leaders_eliminated: Number,
-    //start_time: String,
-    //end_time: String,
+
 });
 
 export default model('Game', Game);

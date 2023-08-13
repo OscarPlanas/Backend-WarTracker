@@ -1,6 +1,5 @@
 import eventController from '../controller/eventController';
 import { Router } from 'express';
-import { verifyToken, isOwner } from '../middlewares/authJWT'
 
 const router = Router();
 

@@ -5,10 +5,13 @@ import User from '../model/User';
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 
+// Function to get all blogs with populated author information
 const getall = async (req: Request, res: Response) => {
     const blogs = await Blog.find().populate('author');
     res.json(blogs);
 }
+
+// Function to get a single blog by its ID with populated author and usersLiked information
 const getone = async (req: Request, res: Response) => {
     const blog = await Blog.findById(req.params.id_blog).populate('author').populate('usersLiked');
     if (!blog) {
@@ -17,6 +20,8 @@ const getone = async (req: Request, res: Response) => {
     res.json(blog);
 
 }
+
+// Function to create a new blog
 const setone = async (req: Request, res: Response) => {
     const blog = new Blog(req.body);
     await blog.save((err: any) => {
@@ -28,6 +33,7 @@ const setone = async (req: Request, res: Response) => {
     console.log(req.body);
 }
 
+// Function to update a blog by its ID
 const update = async (req: Request, res: Response) => {
     try {
         const title = req.body.title;
@@ -43,6 +49,7 @@ const update = async (req: Request, res: Response) => {
     }
 }
 
+// Function to delete a blog by its ID
 const deleteBlog = async (req: Request, res: Response) => {
     try {
         await Blog.findByIdAndRemove(req.params.id);
@@ -53,6 +60,7 @@ const deleteBlog = async (req: Request, res: Response) => {
     }
 }
 
+// Function to add a new blog
 const addBlog = async (req: Request, res: Response) => {
     const blog = new Blog(req.body);
     await blog.save((err: any) => {
@@ -63,6 +71,7 @@ const addBlog = async (req: Request, res: Response) => {
     });
 };
 
+// Function to get comments of a specific blog
 const getComments = async (req: Request, res: Response) => {
     const blog = await Blog.findById(req.params.id_blog);
     if (!blog) {
@@ -75,17 +84,19 @@ const getComments = async (req: Request, res: Response) => {
     res.json(comments);
 };
 
+// Function to get a single comment by its ID
 const getOneComment = async (req: Request, res: Response) => {
-    const comment = await Comment.findById(req.params.id_comment).populate('owner').populate({path: 'replies',
-    populate: { path: 'owner' }
-});
+    const comment = await Comment.findById(req.params.id_comment).populate('owner').populate({
+        path: 'replies',
+        populate: { path: 'owner' }
+    });
     if (!comment) {
         return res.status(404).send('The comment does not exist');
     }
     res.json(comment);
 };
 
-
+// Function to add a new comment to a blog
 const addComment = async (req: Request, res: Response) => {
     const blog = await Blog.findById(req.params.id_blog);
     if (!blog) {
@@ -103,6 +114,7 @@ const addComment = async (req: Request, res: Response) => {
     });
 };
 
+// Function to add a reply to a comment
 const addReply = async (req: Request, res: Response) => {
     const comment = await Comment.findById(req.params.id_comment);
     if (!comment) {
@@ -120,6 +132,7 @@ const addReply = async (req: Request, res: Response) => {
     });
 };
 
+// Function to add a like to a comment
 const addLikeToComment = async (req: Request, res: Response) => {
     try {
         console.log(req.params.id_comment);
@@ -150,26 +163,28 @@ const addLikeToComment = async (req: Request, res: Response) => {
     }
 };
 
+// Function to delete a like from a comment
 const deleteLikeToComment = async (req: Request, res: Response) => {
     try {
-      const comment = await Comment.findById(req.params.id_comment);
-      if (!comment) {
-        return res.status(404).send('The comment does not exist');
-      }
-  
-      const userId = new mongoose.Types.ObjectId(req.params.idUser);
-  
-      comment.updateOne({ $pull: { likes: userId } }, (err: any) => {
-        if (err) {
-          return res.status(500).json({ message: 'Error deleting the like', error: err });
+        const comment = await Comment.findById(req.params.id_comment);
+        if (!comment) {
+            return res.status(404).send('The comment does not exist');
         }
-        res.status(200).json({ status: 'Like deleted' });
-      });
+
+        const userId = new mongoose.Types.ObjectId(req.params.idUser);
+
+        comment.updateOne({ $pull: { likes: userId } }, (err: any) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error deleting the like', error: err });
+            }
+            res.status(200).json({ status: 'Like deleted' });
+        });
     } catch (error) {
-      res.status(500).json({ message: 'Comment not found', error });
+        res.status(500).json({ message: 'Comment not found', error });
     }
-  };
-  
+};
+
+// Function to add a dislike to a comment
 const addDislikeToComment = async (req: Request, res: Response) => {
     try {
         const comment = await Comment.findById(req.params.id_comment);
@@ -184,7 +199,7 @@ const addDislikeToComment = async (req: Request, res: Response) => {
             return res.status(404).send('The user has already liked the comment');
         }
 
-       
+
         comment.updateOne({ $push: { dislikes: userId } }, (err: any) => {
             comment.save();
             res.status(200).json({ status: 'Dislike saved' });
@@ -194,6 +209,7 @@ const addDislikeToComment = async (req: Request, res: Response) => {
     }
 };
 
+// Function to delete a dislike from a comment
 const deleteDislikeToComment = async (req: Request, res: Response) => {
     console.log("entramos en deleteDislikeToComment");
     try {
@@ -215,6 +231,7 @@ const deleteDislikeToComment = async (req: Request, res: Response) => {
     }
 };
 
+// Function to add a user to the list of users who liked a blog
 const addUserLiked = async (req: Request, res: Response) => {
     console.log("entramos en addUserLiked");
     const user = await User.findById(req.params.idUser);
@@ -245,6 +262,7 @@ const addUserLiked = async (req: Request, res: Response) => {
     });
 }
 
+// Function to remove a user from the list of users who liked a blog
 const deleteUserLiked = async (req: Request, res: Response) => {
     console.log("entramos en deleteUserLiked");
     const user = await User.findById(req.params.idUser);
@@ -273,11 +291,6 @@ const deleteUserLiked = async (req: Request, res: Response) => {
         res.status(200).json({ status: 'User deleted' });
     });
 }
-
-
-
-        
-
 
 export default {
     getall,
