@@ -64,13 +64,18 @@ const getall = async (req: Request, res: Response) => {
 	res.status(200).json(users);
 };
 
-// Function to fetch a single user by ID and populate related data
+// Función para obtener un usuario por su ID
 const getone = async (req: Request, res: Response) => {
-	// Find the user by ID and populate related data 
-	const user = await User.findById(req.params.id).populate('meetingsFollowed').populate('blogsLiked').populate('followers').populate('following');
+	
+	// Se busca el usuario por el ID enviado desde el frontend 
+	const user = await User.findById(req.params.id).populate('following').populate('followers').populate('meetingsFollowed').populate('blogsLiked');
+
+	//Si el usuario no existe, se envía un mensaje de error
 	if (!user) {
 		return res.status(404).send('No user found.');
 	}
+
+	//Si el usuario existe, se envía el usuario
 	res.status(200).json(user);
 };
 

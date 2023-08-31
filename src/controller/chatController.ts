@@ -53,4 +53,13 @@ const getone = async (req: Request, res: Response) => {
     res.json(chat);
 };
 
-export default { create, getall, getone, getAllChatsOfUser, getChatByUsers };
+const deleteChat = async (req: Request, res: Response) => {
+    const chat = await Chat.findByIdAndDelete(req.params.id_chat);
+    if (!chat) {
+        return res.status(404).send('The chat does not exist');
+    }
+    res.json({ message: 'Chat deleted' });
+};
+
+
+export default { create, getall, getone, getAllChatsOfUser, getChatByUsers, deleteChat };
